@@ -8,14 +8,13 @@ import React from 'react';
 import { ChatArea } from './ChatArea.jsx';
 import { ControlButton } from './ControlButton.jsx';
 import { StatusDisplay } from './StatusDisplay.jsx';
-import { Feedback } from './Feedback.jsx';
 import styles from './VoiceChat.module.css';
 
 export function VoiceChat() {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h1 className={styles.title}>AI Coach</h1>
+                <h1 className={styles.title}>AI Voice Chat</h1>
             </header>
 
             <main className={styles.main}>
@@ -24,7 +23,6 @@ export function VoiceChat() {
                 <div className={styles.footer}>
                     <ControlButton />
                     <StatusDisplay />
-                    <Feedback />
                 </div>
             </main>
         </div>

@@ -40,11 +40,6 @@ export function AdminPanel() {
         return new Date(dateString).toLocaleString();
     };
 
-    const getRatingStars = (rating) => {
-        if (!rating) return 'No rating';
-        return '⭐'.repeat(rating) + ` (${rating}/5)`;
-    };
-
     if (!isOpen) {
         return (
             <button
@@ -104,9 +99,6 @@ export function AdminPanel() {
                                             <span className={styles.discussionName}>
                                                 {discussion.conversation_name || 'Unnamed Conversation'}
                                             </span>
-                                            <span className={styles.discussionRating}>
-                                                {getRatingStars(discussion.feedback?.rating)}
-                                            </span>
                                         </div>
                                         <div className={styles.discussionPreview}>
                                             <span className={styles.discussionDate}>
@@ -130,14 +122,6 @@ export function AdminPanel() {
                                 <p><strong>Started:</strong> {formatDate(selectedDiscussion.start_time)}</p>
                                 <p><strong>Ended:</strong> {selectedDiscussion.end_time ? formatDate(selectedDiscussion.end_time) : 'Ongoing'}</p>
                                 <p><strong>Messages:</strong> {selectedDiscussion.messages.length}</p>
-                                {selectedDiscussion.feedback && (
-                                    <div className={styles.feedbackInfo}>
-                                        <p><strong>Rating:</strong> {getRatingStars(selectedDiscussion.feedback.rating)}</p>
-                                        {selectedDiscussion.feedback.notes && (
-                                            <p><strong>Notes:</strong> {selectedDiscussion.feedback.notes}</p>
-                                        )}
-                                    </div>
-                                )}
                             </div>
 
                             <div className={styles.messagesContainer}>

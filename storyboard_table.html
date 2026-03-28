@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Chat - UX Storyboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .table-container {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .step-number {
+            font-weight: bold;
+            font-size: 20px;
+            color: #667eea;
+            text-align: center;
+            min-width: 80px;
+            background: #f0f2ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .user-action {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 250px;
+        }
+
+        .system-response {
+            color: #34495e;
+            min-width: 250px;
+        }
+
+        .visual-feedback {
+            color: #8e44ad;
+            min-width: 300px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .header {
+                background: #667eea !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 AI Voice Chat</h1>
+            <p>10-Step User Experience Storyboard</p>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>User Action</th>
+                        <th>System Response</th>
+                        <th>Visual Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="step-number">1</div>
+                        </td>
+                        <td class="user-action">Opens app in browser</td>
+                        <td class="system-response">Loads "AI Coach" interface</td>
+                        <td class="visual-feedback">Purple gradient header, empty chat area, green "Start Chat" button
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">2</div>
+                        </td>
+                        <td class="user-action">Clicks "Start Chat"</td>
+                        <td class="system-response">Requests microphone permission</td>
+                        <td class="visual-feedback">Button shows loading spinner, status: "Connecting..."</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">3</div>
+                        </td>
+                        <td class="user-action">Clicks "Allow" microphone</td>
+                        <td class="system-response">Connects to Gemini AI</td>
+                        <td class="visual-feedback">Status: "Listening...", red "Stop Chat" button, mic icon active</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">4</div>
+                        </td>
+                        <td class="user-action">Speaks: "Hello, can you hear me?"</td>
+                        <td class="system-response">Real-time transcription starts</td>
+                        <td class="visual-feedback">Blue message bubble appears on right, text streams live</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">5</div>
+                        </td>
+                        <td class="user-action">Stops speaking (pause detected)</td>
+                        <td class="system-response">Finalizes user message, AI processes</td>
+                        <td class="visual-feedback">User bubble completes, thinking indicator appears</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">6</div>
+                        </td>
+                        <td class="user-action">Waits for AI response</td>
+                        <td class="system-response">AI generates text response</td>
+                        <td class="visual-feedback">Grey bubble on left, text streams word-by-word</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">7</div>
+                        </td>
+                        <td class="user-action">AI text completes</td>
+                        <td class="system-response">Audio playback begins</td>
+                        <td class="visual-feedback">Speaker icon animates, bubble highlighted during audio</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">8</div>
+                        </td>
+                        <td class="user-action">Responds: "Tell me more"</td>
+                        <td class="system-response">Cycle repeats: transcribe → process → respond</td>
+                        <td class="visual-feedback">New messages stack upward, auto-scroll to latest</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">9</div>
+                        </td>
+                        <td class="user-action">Continues conversation</td>
+                        <td class="system-response">Chat history builds up</td>
+                        <td class="visual-feedback">Scrollable area, clear user/AI message distinction</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="step-number">10</div>
+                        </td>
+                        <td class="user-action">Clicks "Stop Chat"</td>
+                        <td class="system-response">Ends session gracefully</td>
+                        <td class="visual-feedback">Button back to green "Start Chat", status: "Idle"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>🎬 AI Voice Chat UX Storyboard | 10 Essential Steps</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -26,6 +26,9 @@ export function useAudio(onAudioData) {
     const audioSourcesRef = useRef(new Set());
     const nextStartTimeRef = useRef(0);
 
+    // Track if audio processing should be active
+    const isProcessingActiveRef = useRef(false);
+
     /**
      * Initializes microphone capture and audio processing
      */
@@ -53,11 +56,17 @@ export function useAudio(onAudioData) {
             );
 
             // Process audio data in real-time
+            isProcessingActiveRef.current = true;
             scriptProcessorRef.current.onaudioprocess = (event) => {
+                // Only process if audio processing is still active
+                if (!isProcessingActiveRef.current) {
+                    return;
+                }
+
                 const inputData = event.inputBuffer.getChannelData(0);
                 const pcmBlob = createPCMBlob(inputData, CONFIG.AUDIO.INPUT_SAMPLE_RATE);
 
-                if (onAudioData) {
+                if (onAudioData && isProcessingActiveRef.current) {
                     onAudioData(pcmBlob);
                 }
             };
@@ -127,6 +136,9 @@ export function useAudio(onAudioData) {
      * Stops all audio processing and releases resources
      */
     const cleanup = useCallback(() => {
+        // Stop audio processing first
+        isProcessingActiveRef.current = false;
+
         // Stop microphone
         if (mediaStreamRef.current) {
             mediaStreamRef.current.getTracks().forEach(track => track.stop());

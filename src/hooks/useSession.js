@@ -13,6 +13,7 @@ import { useAudio } from './useAudio.js';
 import { useGemini } from './useGemini.js';
 import { useVoiceChat } from '../context/VoiceChatContext';
 import { discussionStorage } from '../utils/discussionStorage.js';
+import { CONFIG } from '../utils/config.js';
 
 export function useSession() {
   const {
@@ -31,6 +32,8 @@ export function useSession() {
   // Use refs to avoid circular dependencies and track accumulated text
   const playAudioResponseRef = useRef(null);
   const sendAudioInputRef = useRef(null);
+  const cleanupAudioRef = useRef(null);
+  const closeRef = useRef(null);
   const accumulatedUserTextRef = useRef('');
   const accumulatedAITextRef = useRef('');
   const userTurnFinalizedRef = useRef(false);
@@ -106,9 +109,17 @@ export function useSession() {
    */
   const handleError = useCallback((error) => {
     console.error('Session error:', error);
-    setError(error.message || 'Unknown error');
+    const errorMessage = error?.message || error?.toString() || 'Unknown error';
+    setError(errorMessage);
     setActive(false);
     setStatus('error');
+    // Clean up on error using refs
+    if (cleanupAudioRef.current) {
+      cleanupAudioRef.current();
+    }
+    if (closeRef.current) {
+      closeRef.current();
+    }
   }, [setError, setActive, setStatus]);
 
   /**
@@ -116,9 +127,12 @@ export function useSession() {
    */
   const handleClose = useCallback(() => {
     console.log('Session closed');
-    setActive(false);
-    setStatus('idle');
-  }, [setActive, setStatus]);
+    // Only update state if we were actually active
+    if (isActive) {
+      setActive(false);
+      setStatus('idle');
+    }
+  }, [setActive, setStatus, isActive]);
 
   /**
    * Handles session open
@@ -136,8 +150,9 @@ export function useSession() {
     handleOpen
   );
 
-  // Store sendAudioInput in ref
+  // Store functions in refs for use in callbacks
   sendAudioInputRef.current = sendAudioInput;
+  closeRef.current = close;
 
   // Audio processing hook - passes audio data to Gemini via ref
   const { startMicrophoneCapture, playAudioResponse, cleanup: cleanupAudio } = useAudio((audioData) => {
@@ -146,8 +161,9 @@ export function useSession() {
     }
   });
 
-  // Store playAudioResponse in ref
+  // Store audio functions in refs
   playAudioResponseRef.current = playAudioResponse;
+  cleanupAudioRef.current = cleanupAudio;
 
   /**
    * Starts a new voice chat session with conversation name
@@ -158,23 +174,44 @@ export function useSession() {
       setActive(true);
       clearError();
 
+      // Check if API key is configured
+      if (!CONFIG.API_KEY) {
+        throw new Error('Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your environment variables.');
+      }
+
       // Start a new discussion with conversation name
       await discussionStorage.startNewDiscussion(conversationName);
 
-      // Start microphone capture
+      // Connect to Gemini API FIRST (before starting microphone)
+      // This ensures the WebSocket is ready before we start sending audio
+      console.log('Connecting to Gemini API...');
+      await connect();
+      console.log('Gemini API connection initiated, waiting for WebSocket to open...');
+
+      // Wait a brief moment for the WebSocket to fully open
+      // The onopen callback will set isConnectedRef to true
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Start microphone capture AFTER connection is established
       const micSuccess = await startMicrophoneCapture();
       if (!micSuccess) {
         throw new Error('Failed to start microphone');
       }
 
-      // Connect to Gemini API
-      await connect();
+      console.log('Session started successfully');
 
     } catch (error) {
       console.error('Failed to start session:', error);
-      setError(error.message);
+      setError(error.message || 'Failed to start session');
       setStatus('error');
       setActive(false);
+      // Clean up on error using refs
+      if (cleanupAudioRef.current) {
+        cleanupAudioRef.current();
+      }
+      if (closeRef.current) {
+        closeRef.current();
+      }
     }
   }, [setStatus, setActive, clearError, startMicrophoneCapture, connect, setError]);
 
@@ -185,11 +222,11 @@ export function useSession() {
     setActive(false);
     setStatus('idle');
 
-    // Close Gemini connection
-    close();
-
-    // Stop audio processing
+    // Stop audio processing FIRST to prevent sending data to closing WebSocket
     cleanupAudio();
+
+    // Close Gemini connection after audio is stopped
+    close();
 
     // End the current discussion
     await discussionStorage.endCurrentDiscussion();
